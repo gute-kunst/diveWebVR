@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webvr - cubes</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<!-- Origin Trial Token, feature = WebVR (For Chrome M62+), origin = https://threejs.org, expires = 2018-08-30 -->
@@ -57,17 +56,12 @@
 
 		<script>
 
-			var clock = new THREE.Clock();
-
 			var container;
 			var camera, scene, raycaster, renderer;
-
 			var room;
 			var isMouseDown = false;
-
 			var INTERSECTED;
 			var crosshair;
-
 			init();
 			animate();
 
@@ -75,26 +69,17 @@
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
-
-				var info = document.createElement( 'div' );
-				info.style.position = 'absolute';
-				info.style.top = '10px';
-				info.style.width = '100%';
-				info.style.textAlign = 'center';
-				info.innerHTML = '<a href="http://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - interactive cubes';
-				container.appendChild( info );
-
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x505050 );
 
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.1, 10 );
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 100 );
 				scene.add( camera );
 
 				crosshair = new THREE.Mesh(
 					new THREE.RingBufferGeometry( 0.02, 0.04, 32 ),
 					new THREE.MeshBasicMaterial( {
 						color: 0xffffff,
-						opacity: 0.5,
+						opacity: 0.2,
 						transparent: true
 					} )
 				);
@@ -213,14 +198,7 @@
                     });
                     object = new THREE.Points( geometry, material );
                     scene.add( object );
-                    //2D Plane  
-                    // renderer = new THREE.WebGLRenderer({antialias: true});
-                    // renderer.setPixelRatio( window.devicePixelRatio );
-                    // renderer.setSize( WIDTH, HEIGHT );
-                    // renderer.setClearColor( 0xECF0F1  , 1 );
-                    // var container = document.getElementById( 'container' );
-                    // container.appendChild( renderer.domElement );
-                    
+                                     
                     // /////////    CONTROLS   /////////
                     let controls = new THREE.TrackballControls(camera, renderer.domElement);
                     controls.rotateSpeed = 1.5;
@@ -302,89 +280,7 @@
 			}
 
 			function render() {
-
-				var delta = clock.getDelta() * 60;
-
-				if ( isMouseDown === true ) {
-
-					var cube = room.children[ 0 ];
-					room.remove( cube );
-
-					cube.position.set( 0, 0, - 0.75 );
-					cube.position.applyQuaternion( camera.quaternion );
-					cube.userData.velocity.x = ( Math.random() - 0.5 ) * 0.02 * delta;
-					cube.userData.velocity.y = ( Math.random() - 0.5 ) * 0.02 * delta;
-					cube.userData.velocity.z = ( Math.random() * 0.01 - 0.05 ) * delta;
-					cube.userData.velocity.applyQuaternion( camera.quaternion );
-					room.add( cube );
-
-				}
-
-				// find intersections
-
-				raycaster.setFromCamera( { x: 0, y: 0 }, camera );
-
-				var intersects = raycaster.intersectObjects( room.children );
-
-				if ( intersects.length > 0 ) {
-
-					if ( INTERSECTED != intersects[ 0 ].object ) {
-
-						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-						INTERSECTED = intersects[ 0 ].object;
-						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-						INTERSECTED.material.emissive.setHex( 0xff0000 );
-
-					}
-
-				} else {
-
-					if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-					INTERSECTED = undefined;
-
-				}
-
-				// Keep cubes inside room
-
-				for ( var i = 0; i < room.children.length; i ++ ) {
-
-					var cube = room.children[ i ];
-
-					cube.userData.velocity.multiplyScalar( 1 - ( 0.001 * delta ) );
-
-					cube.position.add( cube.userData.velocity );
-
-					if ( cube.position.x < - 3 || cube.position.x > 3 ) {
-
-						cube.position.x = THREE.Math.clamp( cube.position.x, - 3, 3 );
-						cube.userData.velocity.x = - cube.userData.velocity.x;
-
-					}
-
-					if ( cube.position.y < - 3 || cube.position.y > 3 ) {
-
-						cube.position.y = THREE.Math.clamp( cube.position.y, - 3, 3 );
-						cube.userData.velocity.y = - cube.userData.velocity.y;
-
-					}
-
-					if ( cube.position.z < - 3 || cube.position.z > 3 ) {
-
-						cube.position.z = THREE.Math.clamp( cube.position.z, - 3, 3 );
-						cube.userData.velocity.z = - cube.userData.velocity.z;
-
-					}
-
-					cube.rotation.x += cube.userData.velocity.x * 2 * delta;
-					cube.rotation.y += cube.userData.velocity.y * 2 * delta;
-					cube.rotation.z += cube.userData.velocity.z * 2 * delta;
-
-				}
-
 				renderer.render( scene, camera );
-
             }
             
 		</script>
