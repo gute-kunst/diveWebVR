@@ -122,14 +122,14 @@
                 camera.position.set(1,1,1)
 			    // camera.lookAt(0,0,0);
 			    camera.up.set(0,1,0);
-                var particle_size = 0.03; // 0.01 for github Dambreak | 0.005 for gearbox | 0.1 for fluid | propeller = 0.01
-                var colormap_min = 0;  // min for Lookup Table [m/s]
-                var colormap_max = 2.7;   // max for Lookup Table [m/s]
+                var particle_size = 0.05; // 0.01 for github Dambreak | 0.005 for gearbox | 0.1 for fluid | propeller = 0.01
+                var colormap_min = 0.5;  // min for Lookup Table [m/s]
+                var colormap_max = 2.5;   // max for Lookup Table [m/s]
                 // var filename = 'gearbox/gearbox_460.csv'       //  github datastorage
                 // var filename = 'propeller/propeller_400.csv'   //  github data storage
                 // var filename = 'fluid.csv'					   //  amazon S3 (don't use for testing) 
-                var filename = 'propeller/propeller_reduced.csv'
-				var filename = 'dambreak.csv'
+                // var filename = 'propeller/propeller_reduced.csv'
+				var filename = 'dambreak/db_200k.csv'
                 THREE.Cache.enabled = true;
                 var loader = new THREE.FileLoader();
                 loader.load('https://raw.githubusercontent.com/jobi2122/datastorage/master/' + filename, function (data) {
@@ -161,7 +161,7 @@
                     };
                     pointGeometry.vertices = positions;
                     // console.log(positions);
-                    // console.log(velocities);
+                    console.log(velocities);
                     var positions = new Float32Array( pointGeometry.vertices.length * 3 );
                     var colors = new Float32Array( pointGeometry.vertices.length * 3 );
                     var sizes = new Float32Array( pointGeometry.vertices.length );
@@ -174,7 +174,7 @@
                     for ( var i = 0; i < pointGeometry.vertices.length; i ++ ) {
                         vertex = pointGeometry.vertices[ i ];
                         vertex.toArray( positions, i * 3 );
-                        var magnitude = Math.sqrt(Math.abs((velocities[i].x)^2 + (velocities[i].y)^2 + (velocities[i].z)^2))
+                        var magnitude = Math.sqrt(Math.pow(velocities[i].x,2) + Math.pow(velocities[i].y, 2) + Math.pow(velocities[i].z,2))
                         color = lut.getColor(magnitude);
                         color.toArray( colors, i * 3 );
                     }
@@ -198,6 +198,17 @@
                         fragmentShader: document.getElementById( 'fragmentshader' ).textContent
                     });
                     object = new THREE.Points( geometry, material );
+					object.geometry.computeBoundingSphere();
+					var object_center = object.geometry.boundingSphere.center;
+					//object.translateX(-object_center.x);  //use in general
+                    object.translateX(-2.7);     //use for dambreak
+					object.translateY(-object_center.y);
+					object.rotation.x = - Math.PI;
+                    //object.translateZ(-object_center.z);
+
+					object.geometry.computeBoundingSphere();
+					var object_center = object.geometry.boundingSphere.center;
+
                     scene.add( object );
                                      
                     // /////////    CONTROLS   /////////
@@ -210,9 +221,8 @@
                     controls.staticMoving = true;
                     controls.dynamicDampingFactor = 0.3;
                     object.geometry.computeBoundingSphere();
-                    var object_center = object.geometry.boundingSphere.center;
                     controls.target.set(object_center.x, object_center.y, object_center.z);	
-                    
+                   
                     var object_sphere = object.geometry.boundingSphere;
                     console.log(object_sphere);
                     //coordinate system --- The X axis is red. The Y axis is green. The Z axis is blue.
@@ -221,8 +231,9 @@
                     var geo = new THREE.PlaneBufferGeometry(5,5,5);
                     var mat = new THREE.MeshBasicMaterial({ color: 0xbfbfbf, side: THREE.DoubleSide,transparent: true, opacity: 2, depthWrite: false });
                     var plane = new THREE.Mesh(geo, mat);
-                    plane.translateX(object_center.x);
-                    plane.translateY( object_center.y);
+					//plane.rotation.x = Math.PI;
+                    // plane.translateX(object_center.x);
+                    // plane.translateY(object_center.y);
                     // plane.translateZ(object_center.z);
                     scene.add(plane);
                     // stats = new Stats();
