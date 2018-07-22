@@ -129,18 +129,10 @@
                 // var filename = 'propeller/propeller_400.csv'   //  github data storage
                 // var filename = 'fluid.csv'					   //  amazon S3 (don't use for testing) 
                 // var filename = 'propeller/propeller_reduced.csv'
-				var filename = 'dambreak/db_200k.csv'
+				var filename = 'dambreak/db_200k.csv'   //100k, 200k, 400k, 800k
                 THREE.Cache.enabled = true;
                 var loader = new THREE.FileLoader();
                 loader.load('https://raw.githubusercontent.com/jobi2122/datastorage/master/' + filename, function (data) {
-                // loader.load('https://s3.eu-central-1.amazonaws.com/dive.webprototype/' + filename, function (data) {
-                    // camera = new THREE.PerspectiveCamera( 60, WIDTH / HEIGHT, 0.01, 1000);
-                    // camera.position.set(-0.2,0,0);  // sets camera position to (x,y,z)
-                    // camera.position.set(0.3082069898459656, 0.24554753263083912, 0.11561752355142028) // gearbox
-                    // camera.position.set(1,1,1)
-                    // camera.lookAt(0,0,0);
-                    // camera.up.set(0,0,1);
-                    // scene = new THREE.Scene();
                     pointGeometry = new THREE.Geometry();
                     var positions = [];
                     var velocities = [];
@@ -202,7 +194,7 @@
 					var object_center = object.geometry.boundingSphere.center;
 					//object.translateX(-object_center.x);  //use in general
                     object.translateX(-2.7);     //use for dambreak
-					object.translateY(-object_center.y);
+					object.translateY(1);
 					object.rotation.x = - Math.PI;
                     //object.translateZ(-object_center.z);
 
@@ -231,13 +223,9 @@
                     var geo = new THREE.PlaneBufferGeometry(5,5,5);
                     var mat = new THREE.MeshBasicMaterial({ color: 0xbfbfbf, side: THREE.DoubleSide,transparent: true, opacity: 2, depthWrite: false });
                     var plane = new THREE.Mesh(geo, mat);
-					//plane.rotation.x = Math.PI;
-                    // plane.translateX(object_center.x);
-                    // plane.translateY(object_center.y);
-                    // plane.translateZ(object_center.z);
+
                     scene.add(plane);
-                    // stats = new Stats();
-                    // container.appendChild( stats.dom );
+
 				document.body.appendChild( WEBVR.createButton( renderer ) );
 
             },
@@ -246,23 +234,13 @@
             )
         }
 
-			function onMouseDown() {
-
-				isMouseDown = true;
-
-			}
-
-			function onMouseUp() {
-
-				isMouseDown = false;
-
-			}
+			function onMouseDown() { isMouseDown = true; }
+			function onMouseUp() { isMouseDown = false; }
 
 			function onPointerRestricted() {
 				var pointerLockElement = renderer.domElement;
 				if ( pointerLockElement && typeof(pointerLockElement.requestPointerLock) === 'function' ) {
 					pointerLockElement.requestPointerLock();
-
 				}
 			}
 
@@ -275,20 +253,13 @@
 			}
 
 			function onWindowResize() {
-
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-
 				renderer.setSize( window.innerWidth, window.innerHeight );
-
 			}
 
-			//
-
 			function animate() {
-
 				renderer.setAnimationLoop( render );
-
 			}
 
 			function render() {
