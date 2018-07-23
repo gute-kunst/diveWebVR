@@ -122,9 +122,9 @@
                 camera.position.set(1,1,1)
 			    // camera.lookAt(0,0,0);
 			    camera.up.set(0,1,0);
-                var particle_size = 0.04; // 0.01 for github Dambreak | 0.005 for gearbox | 0.1 for fluid | propeller = 0.01
+                var particle_size = 0.02; // 0.01 for github Dambreak | 0.005 for gearbox | 0.1 for fluid | propeller = 0.01
                 var colormap_min = 0.5;  // min for Lookup Table [m/s]
-                var colormap_max = 2.5;   // max for Lookup Table [m/s]
+                var colormap_max = 2.7;   // max for Lookup Table [m/s]
                 // var filename = 'gearbox/gearbox_460.csv'       //  github datastorage
                 // var filename = 'propeller/propeller_400.csv'   //  github data storage
                 // var filename = 'fluid.csv'					   //  amazon S3 (don't use for testing) 
@@ -195,7 +195,7 @@
 					//object.translateX(-object_center.x);  //use in general
                     object.translateX(0.5);     //use for dambreak
 					object.translateY(4);
-					object.translateZ(1);
+					object.translateZ(0.5);
 					object.rotation.x = - Math.PI;
 					object.rotation.z =  Math.PI/2;
                     //object.translateZ(-object_center.z);
@@ -226,7 +226,7 @@
                     var mat = new THREE.MeshBasicMaterial({ color: 0xbfbfbf, side: THREE.DoubleSide,transparent: true, opacity: 2, depthWrite: false });
                     var plane = new THREE.Mesh(geo, mat);
 
-                    scene.add(plane);
+                    //scene.add(plane);
 
 				document.body.appendChild( WEBVR.createButton( renderer ) );
 
